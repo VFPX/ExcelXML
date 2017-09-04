@@ -24,7 +24,7 @@ It also contains code changes (ver 1.09) which add Try/Catch blocks to handle th
 * Open the file by Excel and save in other formats to reduce the size without losing information
 * It is not necessary to have Microsoft Excel installed
 
-**Release version 1.09 (2017-09-03)** 
+**Release version 1.09 (2017-09-03)**  
 Added Try/Catch blocks to handle the various Dynamic properties which may not evaluate properly in some cases.
 
 **Release version 1.08**  
