@@ -1,0 +1,7 @@
+*.bak
+*.fxp
+FOXUSER.*
+*_ref.*
+.hg
+/.hgignore
+DeployDynamicForm.ps1
