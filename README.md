@@ -6,12 +6,10 @@ Original author: Rodrigo Bruscain
 The ExcelXML project is designed to bring to the Visual FoxPro the possibility to generate a Excel file converting 99% of all visual caracteristics from a Grid. However, there is the possibility to generate a file without a Grid.
 
 ## NOTE:
+This fork (by Matt Slay 2017-09-03) of the original project converts the VCX class library to a single PRG. 
+This allows better updating of the source code by the VFP community on GitHib since it's a raw code file rather than a binary VCX.
 
-Ver 1.09:  This fork (by Matt Slay 2017-09-03) of the original project converts the VCX class library to a single PRG. 
-This allows better updated of the source code by the VFP community on GitHib.
-
-It also contains code changes which add Try/Catch blocks to handle the various Dynamic properties which may not evaluate properly in some cases.
-
+It also contains code changes (ver 1.09) which add Try/Catch blocks to handle the various Dynamic properties which may not evaluate properly in some cases.
 
 ## Goals
 * Excel files with over 65,535 rows
@@ -25,6 +23,9 @@ It also contains code changes which add Try/Catch blocks to handle the various D
 * The files can be opened by OpenOffice reducing conversion errors
 * Open the file by Excel and save in other formats to reduce the size without losing information
 * It is not necessary to have Microsoft Excel installed
+
+** Release version 1.09 (2017-09-03)**
+Added Try/Catch blocks to handle the various Dynamic properties which may not evaluate properly in some cases.
 
 **Release version 1.08**  
 NEW - Document author included as username or computername.  
