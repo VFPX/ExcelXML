@@ -1,13 +1,11 @@
-*-- This PRG file was extracted from the original VCX file by Matt Slay 2017-09-03.
-*-- This allows better updated of the source code by the VFP community on GitHib.
-*-- PRG version (with code changes): https://github.com/mattslay/ExcelXML
-*-- Original source: https://github.com/VFPX/ExcelXML
+*-- This PRG file was extracted to a PRG file from the original VCX file by Matt Slay 2017-09-03.
+*-- This allows better updates of the source code by the VFP community on GitHib.
+*-- GitHub: https://github.com/VFPX/ExcelXML
 *---------------------------------------------------------------------------------------
 *-- Change Log:
 *---------------------------------------------------------------------------------------
-*- 2017-09-03:  By Matt Slay:
-*--				Extracted code from VCX to PRG. Forked project on GitHub
-*--				Added Try/Catch to handle Dynamci properties that do evaluate properly.
+*- 2017-09-03:  Added Try/Catch to handle Dynamic properties that do evaluate properly.
+*-				[By Matt Slay]
 *-
 *---------------------------------------------------------------------------------------
 
@@ -84,7 +82,7 @@ Define Class ExcelXML As Custom
 		Local lcStyleCode, lcXmlStyle
 		lcXmlStyle = ""
 
-		*- Definição de bordas entre as linhas/colunas (células)
+		*- Definiï¿½ï¿½o de bordas entre as linhas/colunas (cï¿½lulas)
 		lcXmlBorderStyle = ""
 		lcTop = "0"
 		lcBottom = "0"
@@ -124,7 +122,7 @@ Define Class ExcelXML As Custom
 		Endif
 
 
-		*- Adiciono no cursor caso não ache um registro com os mesmos dados
+		*- Adiciono no cursor caso nï¿½o ache um registro com os mesmos dados
 		If Not Seek(plcAlignH + plcAlignV + plcFontName + plcFontFamily + ;
 						plcFontSize + plcForeColor + plcFontBold + plcFontItalic + ;
 						plcFontUnderline + plcFontStrikeThru + plcBackColor + plcPattern + ;
@@ -194,7 +192,7 @@ Define Class ExcelXML As Custom
 		Scan
 			lnRow = lnRow + 1
 
-			If Not This.SetStyles And lnRow >= 2		&&- Não aplica os estilos ao grid.
+			If Not This.SetStyles And lnRow >= 2		&&- Nï¿½o aplica os estilos ao grid.
 				Exit
 			Endif
 
@@ -204,7 +202,7 @@ Define Class ExcelXML As Custom
 					Loop
 				Endif
 
-				*- Formato dos dados da linha/coluna (célula)
+				*- Formato dos dados da linha/coluna (cï¿½lula)
 				lcDataColumn = Evaluate(loColumn.ControlSource)
 				loCurrentControl = This.GetCurrentControlObject(loColumn)
 				lcFormat = ""
@@ -374,7 +372,7 @@ Define Class ExcelXML As Custom
 				lcFontStrikeThru = Padr(lcFontStrikeThru, Len(xxxStylesProperties.ssFontStrikeThru))
 
 
-				*- se o estilo já existir "lcXmlStyle" retorna ""
+				*- se o estilo jï¿½ existir "lcXmlStyle" retorna ""
 				lcXmlStyle = This.addnewstyle( "c", lnRow, lnCol, ;
 							lcAlignH, lcAlignV, lcFontName, lcFontFamily, ;
 							lcFontSize, lcForeColor, lcFontBold, lcFontItalic, ;
@@ -457,7 +455,7 @@ Define Class ExcelXML As Custom
 
 		Index On ssCode Tag idxCode
 
-		*- Crio cursor para gravar o estilo que sera usado pela linha/coluna (célula)
+		*- Crio cursor para gravar o estilo que sera usado pela linha/coluna (cï¿½lula)
 		Create Cursor xxxStylesRowCol ( ssRow c(6), ;
 					ssCol c(3), ;
 					ssCode c(6) )
@@ -488,7 +486,7 @@ Define Class ExcelXML As Custom
 				lcAlignH = Iif(This.SetStyles, This.GetColumnAlign("H", loColumnHeader.Alignment), "Left")
 				lcAlignV = Iif(This.SetStyles, This.GetColumnAlign("V", loColumnHeader.Alignment), "Center")
 
-				*- se o estilo já existir "lcXmlStyle" retorna ""
+				*- se o estilo jï¿½ existir "lcXmlStyle" retorna ""
 				lcXmlStyle = This.addnewstyle( "h", 0, lnCol, ;
 							lcAlignH, lcAlignV, lcFontName, lcFontFamily, ;
 							lcFontSize, lcForeColor, lcFontBold, lcFontItalic, ;
@@ -559,7 +557,7 @@ Define Class ExcelXML As Custom
 			lnPercent = Int((lnRow / (This.RowCount - (Iif(This.GridObject.HeaderHeight > 0, 1, 0))) ) * 100)
 			This.Progress(lnPercent)
 
-			*- faço a varredura em todas as colunas
+			*- faï¿½o a varredura em todas as colunas
 			For lnCol = 1 To This.GridObject.ColumnCount
 				loColumn = This.GetColumn(lnCol)
 				If Not loColumn.Visible
@@ -570,7 +568,7 @@ Define Class ExcelXML As Custom
 				lcDataColumn = Evaluate(loColumn.ControlSource)
 				loCurrentControl = This.GetCurrentControlObject(loColumn)
 
-				*- se não tem objeto de controle na linha da coluna não levo a informação da tabela ao excel
+				*- se nï¿½o tem objeto de controle na linha da coluna nï¿½o levo a informaï¿½ï¿½o da tabela ao excel
 				If Isnull(loCurrentControl)
 					lcDataType = "String"
 					lcDataColumn = ""
@@ -579,7 +577,7 @@ Define Class ExcelXML As Custom
 					Case Vartype(lcDataColumn) $ "N//Y"
 						lcDataType = "Number"
 
-						*- Se o currentcontrol da coluna for um combobox mostro o seu conteudo ao inves da posição numerica
+						*- Se o currentcontrol da coluna for um combobox mostro o seu conteudo ao inves da posiï¿½ï¿½o numerica
 						If Lower(loCurrentControl.BaseClass) = "combobox"
 							Try
 								Do Case
@@ -627,7 +625,7 @@ Define Class ExcelXML As Custom
 									lcDataColumn = Evaluate(lcAuxDataColumn)
 
 
-								*- Qualquer outro mostro o conteudo do campo e não o conteudo do array
+								*- Qualquer outro mostro o conteudo do campo e nï¿½o o conteudo do array
 								Otherwise
 									lcDataColumn = lcDataColumn
 								Endcase
@@ -854,18 +852,18 @@ Define Class ExcelXML As Custom
 	*| Excelxml::
 	*/---------------------------------------------------------------------------------------------------/*
 	*/ Descripton..: - Classe para converter o grid do vfp em um arquivo xml para o Excel.               /*
-	*/				 - A grande vantagem na utilização é que NÃO NECESSITA DO EXCEL INSTALADO            /*
-	*/                 pois em nenhum momento o Excel é instanciado para automação.                      /*
-	*/                 Apesar de ser um arquivo xml, se encontra no padrão Microsoft onde é reconhecido  /*
+	*/				 - A grande vantagem na utilizaï¿½ï¿½o ï¿½ que Nï¿½O NECESSITA DO EXCEL INSTALADO            /*
+	*/                 pois em nenhum momento o Excel ï¿½ instanciado para automaï¿½ï¿½o.                      /*
+	*/                 Apesar de ser um arquivo xml, se encontra no padrï¿½o Microsoft onde ï¿½ reconhecido  /*
 	*/                 pelo Excel como "Planilha XML 2003 (*.xml)". Dessa forma fica restrito o uso      /*
 	*/                 para Excel 2003 ou superior.                                                      /*
 	*/                                                                                                   /*
-	*/				 - Se o Excel estiver instalado o icone do arquivo gerado será reconhecido		     /*
-	*/				   pelo Excel e abrindo o arquivo será reconhecido como se fosse um XLS ou XLSX,     /*		
-	*/                 ou seja, tudo será transparente para o Excel.                                     /*
+	*/				 - Se o Excel estiver instalado o icone do arquivo gerado serï¿½ reconhecido		     /*
+	*/				   pelo Excel e abrindo o arquivo serï¿½ reconhecido como se fosse um XLS ou XLSX,     /*		
+	*/                 ou seja, tudo serï¿½ transparente para o Excel.                                     /*
 	*/                                                                                                   /*
 	*/               - Praticamente todos os recursos visuais do grid, headers, colunas e linhas         /*
-	*/                 são tratados na exportação. Segue abaixo as propriedades reconhecidas:            /*
+	*/                 sï¿½o tratados na exportaï¿½ï¿½o. Segue abaixo as propriedades reconhecidas:            /*
 	*/                                                                                                   /*
 	*/                 Header Properties                                                                 /*
 	*/                 ---------------------------------                                                 /*  
@@ -890,19 +888,19 @@ Define Class ExcelXML As Custom
 	*/				   Goals
 	*/                 ------
 	*/                 a) Possibilidade de gerar planilhas com mais de 65,535 linhas superando 
-	*/                    a limitaçao nativa do VFP
+	*/                    a limitaï¿½ao nativa do VFP
 	*/                 b) Converte um grid em planilha Excel assumindo 99% do visual do grid
 	*/				   c) Easy to implement and it is not necessary to change your code
 	*/                 d) Compativel com Excel 2003 ou superior
-	*/                 e) Pode ser aberto pelo OpenOffice reduzindo erros de conversão
-	*/                 f) Ao abrir o arquivo pelo Excel é possivel salvar em outros formatos
+	*/                 e) Pode ser aberto pelo OpenOffice reduzindo erros de conversï¿½o
+	*/                 f) Ao abrir o arquivo pelo Excel ï¿½ possivel salvar em outros formatos
 	*/                 g) Nao precisa ter o Excel instalado
 	*/
 	*/                                                                                                   /*
 	*/ Author......: Rodrigo Bruscain                                                                    /*
-	*/ Date........: 25/05/2013                                                                          /*
-	*/ Country.....: Brazil - São Paulo - SP                                                             /*
-	*/ Version.....: 1.08                                                                                /*
+	*/ Date........: 25/05/2013 (Original)                                                               /*
+	*/ Country.....: Brazil - Sï¿½o Paulo - SP                                                             /*
+	*/ Version.....: 1.09 (2017-09-03                                                                     /*
 	*/---------------------------------------------------------------------------------------------------/*
 	Procedure Init
 
@@ -948,24 +946,23 @@ Define Class ExcelXML As Custom
 		AddProperty(This.Version, "DateTime", "Sep.03.2017 3:59:41 AM")
 		AddProperty(This.Version, "Author", "Rodrigo Duarte Bruscain")
 		AddProperty(This.Version, "CountryAndCity", "kitchener ON - Canada")
-		AddProperty(This.Version, "Url", "https://github.com/mattslay/ExcelXML")
+		AddProperty(This.Version, "Url", "https://github.com/ExcelXML")
 		AddProperty(This.Version, "Email", "bruscain@hotmail.com")
 		
-		
 	Endproc
 
 
 	*|================================================================================ 
 	*| Excelxml::
-	Procedure Progress
-		Lparameters plnPercent
+	Procedure Progress(plnPercent)
+
 	Endproc
 
 
 	*|================================================================================ 
 	*| Excelxml::
-	Procedure Save
-		Lparameters plcFile
+	Procedure Save(plcFile)
+
 		Local lcCreatedDate, lnCol, lcSetPoint, loForm, lcAlias, lnRecNo, ;
 			lcXmlStart, lcXmlDocumentProperties, lcXmlExcelWorkbook, lcStringStyles, ;
 			lcXmlAllStyles, lcXmlFreezePanes, lcStringFilter, lcStringColumnWidth, ;
@@ -1004,10 +1001,10 @@ Define Class ExcelXML As Custom
 		Afields(This._Fields, This.Alias)
 
 
-		*- Data da criação do arquivo excel
+		*- Data da criaï¿½ï¿½o do arquivo excel
 		lcCreatedDate = Str(Year(Date()), 4) + "-" + Transform(Month(Date()), "@L 99") + "-" + Transform(Day(Date()), "@L 99") + "T" + Time() + "Z"
 
-		*- Numero de colunas válidas para o excel
+		*- Numero de colunas vï¿½lidas para o excel
 		This.ColumnCount = 0
 		For lnCol = 1 To This.GridObject.ColumnCount
 			If This.GridObject.Columns(lnCol).Visible = .T.
@@ -1015,7 +1012,7 @@ Define Class ExcelXML As Custom
 			Endif
 		Endfor
 
-		*- Numero de linhas disponíveis para o excel
+		*- Numero de linhas disponï¿½veis para o excel
 		This.RowCount = 0
 		Select (This.Alias)
 		Count To This.RowCount
@@ -1030,7 +1027,7 @@ Define Class ExcelXML As Custom
 			Return .F.
 		Endif
 
-		*- No Excel casas decimais obrigatóriamente trabalham com ponto "."
+		*- No Excel casas decimais obrigatï¿½riamente trabalham com ponto "."
 		lcSetPoint = Set("Point")
 		Set Point To "."
 
@@ -1068,9 +1065,9 @@ Define Class ExcelXML As Custom
 
 
 		*- Crio os estilos de cores/fontes/formato/etc das colunas
-		*- Depois junto com o estilo padrão todos os estilos encontrados
-		*- Estilos são todas as formatões da células combinadas onde um estilo pode ser usado
-		*- por várias céluas ou por uma única célula.
+		*- Depois junto com o estilo padrï¿½o todos os estilos encontrados
+		*- Estilos sï¿½o todas as formatï¿½es da cï¿½lulas combinadas onde um estilo pode ser usado
+		*- por vï¿½rias cï¿½luas ou por uma ï¿½nica cï¿½lula.
 		lcStringStyles = ""
 		lcStringStyles = This.buildheadersstyles()					&&- Estilos do header
 		lcStringStyles = lcStringStyles + This.buildcolumnsstyles()	&&- Estilos das linhas/colunas
@@ -1273,31 +1270,32 @@ Define Class ExcelXML As Custom
 		Endif
 
 		Return lLReturn
+
 	Endproc
 
 
 	*|================================================================================ 
 	*| Excelxml::
-	Procedure SeekStyle
-	Lparameters plcRow, plcCol
-	Local lcReturn
-	lcReturn = ""
+	Procedure SeekStyle(plcRow, plcCol)
 
-	*- se nao aplica estilos
-	If Not This.SetStyles And plcRow > "000001"
-		plcRow = "000001"
-	Endif
+		Local lcReturn
+		lcReturn = ""
 
-	*- Procuro um estilo para a celula, caso nao encontre aplico o padrão.
-	*- Teoricamente todas as celulas deve ter um estilo e não o padrão.		 
-	If Seek(plcRow + plcCol, "xxxStylesRowCol", "idxRowCol")
-		lcReturn = xxxStylesRowCol.ssCode
-	Else
-		lcReturn = "Default"
-	Endif
+		*- se nao aplica estilos
+		If Not This.SetStyles And plcRow > "000001"
+			plcRow = "000001"
+		Endif
 
-	Return lcReturn
+		*- Procuro um estilo para a celula, caso nao encontre aplico o padrï¿½o.
+		*- Teoricamente todas as celulas deve ter um estilo e nï¿½o o padrï¿½o.		 
+		If Seek(plcRow + plcCol, "xxxStylesRowCol", "idxRowCol")
+			lcReturn = xxxStylesRowCol.ssCode
+		Else
+			lcReturn = "Default"
+		Endif
+
+		Return lcReturn
+
 	Endproc
-
 
 Enddefine
