@@ -1,25 +1,25 @@
 # ExcelXML
-**Convert a Table or a Grid control into a Microsoft Excel XML Spreadsheet file.**
+**Convert a Table/Cursor/Alias or Grid control into a Microsoft Excel XML Spreadsheet file.**
 
 Original author: Rodrigo Bruscain
 
-The ExcelXML project is designed to bring to the Visual FoxPro the possibility to generate a Excel file converting 99% of all visual caracteristics from a Grid. However, there is the possibility to generate a file without a Grid.
+The ExcelXML project brings to Visual FoxPro the ability to generate an Excel file from a grid or table/cursor/alias. When used with a grid, it attempts to export 99% of all visual caracteristics from the Grid. It can also export directly from a cursor/alias, without requiring a grid.
 
 ## NOTE:
 [2017-09-03] Extracted original VCX to PRG to allow better updating of the source code by the VFP community on GitHib since it's a raw code file rather than a binary VCX. [by Matt Slay]
 
 ## Goals
-* Excel files with over 65,535 rows
-* No limit size (it depends on the Operating System)
-* Convert a Grid Control into a Excel XML file considering 99% of the visual characteristics
-* It is possible to use Grid Dynamics properties
-* Based in all Grid visual properties
-* It is possible to convert a table without a Grid Control as well
-* Easy to implement and it is not necessary to change your code
-* Compatible with Microsoft Excel 2003 or higher
-* The files can be opened by OpenOffice reducing conversion errors
-* Open the file by Excel and save in other formats to reduce the size without losing information
-* It is not necessary to have Microsoft Excel installed
+* Excel files with over 65,535 rows.
+* No limit size (it depends on the Operating System).
+* Convert a Grid Control into a Excel XML file considering 99% of the visual characteristics.
+* It is possible to use Grid Dynamics properties.
+* Attempts to honor (export) all Grid visual properties.
+* It is possible to convert a table/cursor/alias without requiring a Grid Control.
+* Easy to implement and it is not necessary to change your code.
+* Compatible with Microsoft Excel 2003 or higher.
+* The files can be opened by OpenOffice reducing conversion errors.
+* Open the file by Excel and save in other formats to reduce the size without losing information.
+* It is not necessary to have Microsoft Excel installed.
 
 **Release version 1.09 (2017-09-03)**  
 Added Try/Catch blocks to handle the various Dynamic properties which may not evaluate properly in some cases.
