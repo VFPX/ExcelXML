@@ -1,9 +1,11 @@
 # ExcelXML
-**Convert a Table/Cursor/Alias or Grid control into a Microsoft Excel XML Spreadsheet file.**
+**Export a Table/Cursor/Alias or Grid control into a Microsoft Excel XML Spreadsheet file.**
 
 Original author: Rodrigo Bruscain
 
 The ExcelXML project brings to Visual FoxPro the ability to generate an Excel file from a grid or table/cursor/alias. When used with a grid, it attempts to export 99% of all visual caracteristics from the Grid. It can also export directly from a cursor/alias, without requiring a grid.
+
+This tool produces and Excel XML file, which can be opened by Excel, but not a .XLS or .XLSX file. To achieve .XLS or .XLSX file format, you can programmatically use Excel to convert the XML file to .XLS or .XLSX format. Example code for this step will be added soon.
 
 ## NOTE:
 [2017-09-03] Extracted original VCX to PRG to allow better updating of the source code by the VFP community on GitHib since it's a raw code file rather than a binary VCX. [by Matt Slay]
@@ -52,9 +54,10 @@ FIX - Index error when the index tag is too big.
 
 | Properties and Methods | Description |  
 | -----------------------|-------------|
+|![](ExcelXML_property_vs.bmp) Alias | Sets the cursor/alias name to export to an Excel XML file. This is used if the GridObject property is not set.|  
 |![](ExcelXML_property_vs.bmp) ColumnCount | Returns the number of columns included in the Excel file.|  
 |![](ExcelXML_property_vs.bmp) File | Inform the name of Excel file. If you don't inform the name with the extension, the XML extension will be included. The default file name is "Book1"|  
-|![](ExcelXML_property_vs.bmp) GridObject | Inform the Grid control object to convert a Grid control in an Excel XML file.|
+|![](ExcelXML_property_vs.bmp) GridObject | Identifies the Grid object to export to an Excel XML file. RecordSource on GRid should already be set.|
 |![](ExcelXML_property_vs.bmp) HasFilter | .T. Includes the option Filter in all columns in the generated file.|
 |![](ExcelXML_property_vs.bmp) LockHeader | .T. locks the header in the generated file. This option in Excel is called by Freeze Top Row.|
 |![](ExcelXML_property_vs.bmp) OpenAfterSaving | .T. to open the file after saving it.|
