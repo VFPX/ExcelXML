@@ -57,7 +57,7 @@ FIX - Index error when the index tag is too big.
 |![](ExcelXML_property_vs.bmp) Alias | Sets the cursor/alias name to export to an Excel XML file. This is used if the GridObject property is not set.|  
 |![](ExcelXML_property_vs.bmp) ColumnCount | Returns the number of columns included in the Excel file.|  
 |![](ExcelXML_property_vs.bmp) File | Inform the name of Excel file. If you don't inform the name with the extension, the XML extension will be included. The default file name is "Book1"|  
-|![](ExcelXML_property_vs.bmp) GridObject | Identifies the Grid object to export to an Excel XML file. RecordSource on GRid should already be set.|
+|![](ExcelXML_property_vs.bmp) GridObject | Identifies the Grid object to exported to an Excel XML file. RecordSource property on Grid should already be set.|
 |![](ExcelXML_property_vs.bmp) HasFilter | .T. Includes the option Filter in all columns in the generated file.|
 |![](ExcelXML_property_vs.bmp) LockHeader | .T. locks the header in the generated file. This option in Excel is called by Freeze Top Row.|
 |![](ExcelXML_property_vs.bmp) OpenAfterSaving | .T. to open the file after saving it.|
