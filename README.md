@@ -1,11 +1,11 @@
 # ExcelXML
-**Export a Table/Cursor/Alias or Grid control into a Microsoft Excel XML Spreadsheet file.**
+**Export a Table/Cursor/Alias or Grid control into a Microsoft Excel XML Spreadsheet file, or XLS/XLSX.**
 
 Original author: Rodrigo Bruscain
 
-The ExcelXML project brings to Visual FoxPro the ability to generate an Excel file from a grid or table/cursor/alias. When used with a grid, it attempts to export 99% of all visual caracteristics from the Grid. It can also export directly from a cursor/alias, without requiring a grid.
+The ExcelXML project brings to Visual FoxPro the ability to generate an Excel file from a grid or table/cursor/alias. When used with a grid, it attempts to export 99% of all visual caracteristics from the Grid. It can also export directly from a cursor/alias, without requiring a grid. 
 
-This tool produces and Excel XML file, which can be opened by Excel, but not a .XLS or .XLSX file. To achieve .XLS or .XLSX file format, you can programmatically use Excel to convert the XML file to .XLS or .XLSX format. Example code for this step will be added soon.
+This tool produces an Excel XML file using only VFP code to generate the XML markup. This file can be opened by Excel or other open source spreadsheet tools. It can also convert the XML file to an .XLS or .XLSX file, but requires Excel to do the conversion.
 
 ## NOTE:
 [2017-09-03] Extracted original VCX to PRG to allow better updating of the source code by the VFP community on GitHib since it's a raw code file rather than a binary VCX. [by Matt Slay]
@@ -22,6 +22,12 @@ This tool produces and Excel XML file, which can be opened by Excel, but not a .
 * The files can be opened by OpenOffice reducing conversion errors.
 * Open the file by Excel and save in other formats to reduce the size without losing information.
 * It is not necessary to have Microsoft Excel installed.
+
+**Release version 1.10 (2017-09-10)**  
+Added new method:  ConvertXmlToXlsx(tcFilename, tnFileFormat, tlOpenAfterExporting)  
+Added new properties for ColumnHeaderBackgroundColor and ColumnHeaderForeColor  
+Added new property GridClass to use when creating a temporary form to create grid to host the cursor/alias during the export.  
+FIX - Fixed bug in Bottom Border logic if cursor/grid only has 1 row of data.  
 
 **Release version 1.09 (2017-09-03)**  
 Added Try/Catch blocks to handle the various Dynamic properties which may not evaluate properly in some cases.
@@ -69,6 +75,7 @@ FIX - Index error when the index tag is too big.
 |![](ExcelXML_method_vs.bmp) About|About ExcelXML class|
 |![](ExcelXML_method_vs.bmp) Progress|Method used to show the percentage processed.|
 |![](ExcelXML_method_vs.bmp) Save|Creates the Excel XML file.|
+|![](ExcelXML_method_vs.bmp) ConvertXmlToXlsx|Converts the created Excel XML file file to XLS or XLSX format using Excel.|
 
 ## Sample 01
 ![](ExcelXML_sample01.png)
