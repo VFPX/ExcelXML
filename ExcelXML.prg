@@ -4,12 +4,18 @@
 *---------------------------------------------------------------------------------------
 *-- Change Log:
 *---------------------------------------------------------------------------------------
-*- 2017-09-03:  Added Try/Catch to handle Dynamic properties that do evaluate properly.
+*- 2017-09-10:	Ver 1.10
+*--				1. Added new method:  ConvertXmlToXlsx(tcFilename, tnFileFormat, tlOpenAfterExporting)
+*--				2. Fixed bug in Bottom Border logic if cursor/grid only has 1 row of data.
+*--				3. Added new properties for ColumnHeaderBackgroundColor and ColumnHeaderForeColor 
+*--				4. Added new property GridClass to use when creating a temporary form to create grid to host the cursor/alias during the export.
+*- 
+*- 2017-09-03:  Ver 1.09
+*--				Added Try/Catch to handle Dynamic properties that do evaluate properly.
 *-				[By Matt Slay]
-*-
 *---------------------------------------------------------------------------------------
 
-Define Class ExcelXML As Custom
+Define Class ExcelXml As Custom
 
 	* Array with information about the structure of the table in a ;
 	* specified work area, specified by a table alias, or in the currently ;
@@ -52,26 +58,32 @@ Define Class ExcelXML As Custom
 	* XML encoding type used to set the code that defines special ;
 	* characters. Default code is "iso-8859-1".
 	xmlEncoding     = 'iso-8859-1'
-
-	*---------------------------------------------------------------------------------------
-
+	cErrorMessage = ""
+	* The grid class name to use when creating a temporary form to create grid to host the cursor
+	* during the export.
+	GridClass = "grid"
+	* Colmn Header Background color. Can override grid header backcolor. Set to a string with Hex value, like "#CCCCCC" for light gray.
+	ColumnHeaderBackgroundColor = .null.
+	* Colmn Header ForegColor. Can override grid header forecolor. Set to a string with Hex value, like "#000000" for black.
+	ColumnHeaderForeColor = .null.
+	
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure About
 	
-		Messagebox("ExcelXML " + This.Version.Number + " " + This.Version.Datetime + This.crlf + ;
+		Messagebox("ExcelXml " + This.Version.Number + " " + This.Version.Datetime + This.crlf + ;
 					"Converts a Grid control into a Microsoft Excel XML file" + This.crlf + ;
 					"" + This.crlf + ;
 					"Created by " + This.Version.Author + This.crlf + ;
 					This.Version.CountryAndCity + This.crlf + ;
 					This.Version.url + This.crlf + ;
-					This.Version.Email, 64, "About ExcelXML")
+					This.Version.Email, 64, "About ExcelXml")
 	Endproc
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure AddNewStyle
 		Lparameters plcType, plnRow, plnCol, ;
 			plcAlignH, plcAlignV, plcFontName, plcFontFamily, ;
@@ -96,19 +108,18 @@ Define Class ExcelXML As Custom
 			If Inlist(This.GridObject.GridLines, 1, 3)
 				lcXmlBorderStyle = lcXmlBorderStyle + [    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="] + lcGridLineWidth + [" ss:Color="] + lcGridLineColor + ["/>] + This.crlf
 				lcXmlBorderStyle = lcXmlBorderStyle + [    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="] + lcGridLineWidth + [" ss:Color="] + lcGridLineColor + ["/>] + This.crlf
-			Endif
-
+			EndIf
+			
 		*- Linhas na vertical
 			If Inlist(This.GridObject.GridLines, 2, 3)
 				If This.GridObject.GridLines = 2
 					If plnRow = 1					&&- Se for a primeira linha
 						lcTop = "1"
 						lcXmlBorderStyle = lcXmlBorderStyle + [    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="] + lcGridLineWidth + [" ss:Color="] + lcGridLineColor + ["/>] + This.crlf
-					Else
-						If plnRow = (This.RowCount - 1)	&&- Se for a ultima linha
-							lcBottom = "1"
-							lcXmlBorderStyle = lcXmlBorderStyle + [    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="] + lcGridLineWidth + [" ss:Color="] + lcGridLineColor + ["/>] + This.crlf
-						Endif
+					Endif
+					If plnRow = (This.RowCount - 1)	&&- Se for a ultima linha
+						lcBottom = "1"
+						lcXmlBorderStyle = lcXmlBorderStyle + [    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="] + lcGridLineWidth + [" ss:Color="] + lcGridLineColor + ["/>] + This.crlf
 					Endif
 				Endif
 
@@ -172,7 +183,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure BuildColumnsStyles
 	
 		Local lcAlignH, lcAlignV, lcFontName, lcFontFamily, ;
@@ -373,7 +384,7 @@ Define Class ExcelXML As Custom
 
 
 				*- se o estilo j� existir "lcXmlStyle" retorna ""
-				lcXmlStyle = This.addnewstyle( "c", lnRow, lnCol, ;
+				lcXmlStyle = This.AddNewStyle( "c", lnRow, lnCol, ;
 							lcAlignH, lcAlignV, lcFontName, lcFontFamily, ;
 							lcFontSize, lcForeColor, lcFontBold, lcFontItalic, ;
 							lcFontUnderline, lcFontStrikeThru, lcBackColor, lcPattern, ;
@@ -390,7 +401,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure BuildColumnsWidth
 	
 		Local lcXmlColumnsWidth, lnCol, lnColumnWidth
@@ -411,7 +422,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure BuildHeadersStyles
 	
 		Local loColumn, loColumnHeader, lnCol, lcXmlStyles, lcXmlStyle, ;
@@ -472,8 +483,18 @@ Define Class ExcelXML As Custom
 				loColumn = This.GetColumn(lnCol)
 				loColumnHeader = This.GetColumnHeader(loColumn)
 
-				lcBackColor = This.ColorToStrHexa( Iif(This.SetStyles, loColumnHeader.BackColor, Rgb(255, 255, 255)) )
-				lcForeColor = This.ColorToStrHexa( Iif(This.SetStyles, loColumnHeader.ForeColor, Rgb(0, 0, 0)) )
+				If IsNull(This.ColumnHeaderBackgroundColor)
+					lcBackColor = This.ColorToStrHexa( Iif(This.SetStyles, loColumnHeader.BackColor, Rgb(255, 255, 255)) )
+				Else
+					lcBackColor = This.ColumnHeaderBackgroundColor
+				EndIf
+				
+				If IsNull(This.ColumnHeaderForeColor)
+					lcForeColor = This.ColorToStrHexa( Iif(This.SetStyles, loColumnHeader.ForeColor, Rgb(0, 0, 0)) )
+				Else
+					lcForeColor = This.ColumnHeaderForeColor
+				EndIf
+				
 				lcFontName = Padr(loColumnHeader.FontName, Len(xxxStylesProperties.ssFontName))
 				lcFontSize = Transform(loColumnHeader.FontSize, "@L 999")
 				lcFontItalic = Iif(loColumnHeader.FontItalic, "1", "0")
@@ -505,7 +526,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure BuildRows
 		Local lcXmlRows, lcDataType, lcDataColumn, lcAuxDataColumn, lnRow, lnCol, loColumn, loColumnHeader, loCurrentControl, ;
 			lnPercent, lnCountRowSource, lcCountOption, laArrayTmp, lcComboOption, lcToolTipText, lnBytes, llHasDecimals, ;
@@ -549,6 +570,7 @@ Define Class ExcelXML As Custom
 		*- Adiciono a linha do Registro no arquivo excel
 		Select (This.Alias)
 		Go Top
+		
 		Scan
 			lnRow = lnRow + 1
 			lcXmlRows = lcXmlRows + [   <Row ss:AutoFitHeight="0">] + This.crlf
@@ -614,7 +636,7 @@ Define Class ExcelXML As Custom
 										Else
 											lcArrayName = Substr(loCurrentControl.RowSource, Rat(".", loCurrentControl.RowSource) + 1)
 											lnCountObjectHierarchy = Occurs(".", Sys(1272, This.GridObject))
-											lcAuxDataColumn = "this.GridObject" + Replicate(".Parent", lnCountObjectHierarchy) + "." + lcArrayName + "[" + Alltrim(Str(lcDataColumn)) + "]"
+											lcAuxDataColumn = "This.GridObject" + Replicate(".Parent", lnCountObjectHierarchy) + "." + lcArrayName + "[" + Alltrim(Str(lcDataColumn)) + "]"
 										Endif
 
 									*- Array comum	
@@ -711,7 +733,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure ColorToStrHexa(plnColor)
 	
 		Local lnDecimalColor
@@ -723,7 +745,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure GetColumn(plcColumnNumber)
 
 		Local lnCol
@@ -738,7 +760,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure GetColumnAlign(plcWhat, plnAlignment, plcVartype)
 	
 		Local lcAlignment, lcAlignH, lcAlignV
@@ -784,7 +806,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure GetColumnHeader(ploColumn)
 		
 		Local loReturn, lnX
@@ -805,7 +827,7 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure GetCurrentControlObject(ploGridColumn)
 		
 		Local lcCurrentControl
@@ -830,26 +852,26 @@ Define Class ExcelXML As Custom
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure HasColumnVisible
 	
-		Local lnCol, lLReturn
-		lLReturn = .F.
+		Local lnCol, llReturn
+		llReturn = .F.
 
 		For lnCol = 1 To This.GridObject.ColumnCount
 			If This.GridObject.Columns(lnCol).Visible
-				lLReturn = .T.
+				llReturn = .T.
 				Exit
 			Endif
 		Endfor
 
-		Return lLReturn
+		Return llReturn
 		
 	Endproc
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	*/---------------------------------------------------------------------------------------------------/*
 	*/ Descripton..: - Classe para converter o grid do vfp em um arquivo xml para o Excel.               /*
 	*/				 - A grande vantagem na utiliza��o � que N�O NECESSITA DO EXCEL INSTALADO            /*
@@ -897,10 +919,9 @@ Define Class ExcelXML As Custom
 	*/                 g) Nao precisa ter o Excel instalado
 	*/
 	*/                                                                                                   /*
-	*/ Author......: Rodrigo Bruscain                                                                    /*
-	*/ Date........: 25/05/2013 (Original)                                                               /*
+	*/ Original Author......: Rodrigo Bruscain                                                           /*
+	*/ Original Date........: 25/05/2013 (Original)                                                      /*
 	*/ Country.....: Brazil - S�o Paulo - SP                                                             /*
-	*/ Version.....: 1.09 (2017-09-03                                                                     /*
 	*/---------------------------------------------------------------------------------------------------/*
 	Procedure Init
 
@@ -942,25 +963,28 @@ Define Class ExcelXML As Custom
 
 		*- version object
 		This.Version = Createobject("empty")
-		AddProperty(This.Version, "Number", "Beta 1.09")
-		AddProperty(This.Version, "DateTime", "Sep.03.2017 3:59:41 AM")
+		AddProperty(This.Version, "Version", "1.10")
+		AddProperty(This.Version, "DateTime", "Sep.10.2017 3:59:41 AM")
 		AddProperty(This.Version, "Author", "Rodrigo Duarte Bruscain")
 		AddProperty(This.Version, "CountryAndCity", "kitchener ON - Canada")
-		AddProperty(This.Version, "Url", "https://github.com/ExcelXML")
+		AddProperty(This.Version, "Url", "https://github.com/ExcelXml")
 		AddProperty(This.Version, "Email", "bruscain@hotmail.com")
+		AddProperty(This.Version, "Email2", "mattslay@jordanmachine.com")
 		
 	Endproc
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure Progress(plnPercent)
+	
+		*-- Add any code here that you want to execute as processing scans over each row...
 
 	Endproc
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure Save(plcFile)
 
 		Local lcCreatedDate, lnCol, lcSetPoint, loForm, lcAlias, lnRecNo, ;
@@ -968,8 +992,8 @@ Define Class ExcelXML As Custom
 			lcXmlAllStyles, lcXmlFreezePanes, lcStringFilter, lcStringColumnWidth, ;
 			lcXmlWorksheet_part1, lcXmlWorksheet_part2, lnBytes, loError
 
-		plcFile = Iif(Empty(plcFile), "Book1", plcFile)
-		This.File = Iif(Empty(This.File), plcFile, This.File)
+		plcFile = Evl(plcFile, "Book1")
+		This.File = Evl(This.File, plcFile)
 		This.File = This.File + Iif(Empty(Justext(This.File)), ".XML", "")
 
 		If Empty(Alias())
@@ -979,16 +1003,15 @@ Define Class ExcelXML As Custom
 
 		*- crio um grid virtual caso a nao exista um grid para conversao, 
 		*- ou seja, estou convertendo somente a tabela
-		If Vartype(This.GridObject) <> "O"
-			loForm = Createobject("form")
-			loForm.AddObject("grid1", "grid")
+		If VarType(This.GridObject) != "O"
+			loForm = CreateObject("form")
+			loForm.AddObject("grid1", This.GridClass)
 			loForm.Grid1.RecordSource =  Alias()
 			loForm.Grid1.Visible = .T.
 			loForm.Refresh()
 			This.GridObject = loForm.Grid1
 			This.SetStyles = .F.
 		Endif
-
 
 		*- environment
 		If This.GridObject.RecordSourceType = 1
@@ -1033,7 +1056,7 @@ Define Class ExcelXML As Custom
 
 		*- Inicio tratamento dos dados
 		Text To lcXmlStart Textmerge Pretext 2 Noshow
-			<?xml version="1.0" encoding="<<this.xmlEncoding>>"?>
+			<?xml version="1.0" encoding="<<This.xmlEncoding>>"?>
 			<?mso-application progid="Excel.Sheet"?>
 			<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
 			 xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -1069,7 +1092,7 @@ Define Class ExcelXML As Custom
 		*- Estilos s�o todas as format�es da c�lulas combinadas onde um estilo pode ser usado
 		*- por v�rias c�luas ou por uma �nica c�lula.
 		lcStringStyles = ""
-		lcStringStyles = This.buildheadersstyles()					&&- Estilos do header
+		lcStringStyles = This.BuildHeadersStyles()					&&- Estilos do header
 		lcStringStyles = lcStringStyles + This.buildcolumnsstyles()	&&- Estilos das linhas/colunas
 
 		Text To lcXmlAllStyles Textmerge Pretext 2 Noshow
@@ -1114,8 +1137,8 @@ Define Class ExcelXML As Custom
 				   <FrozenNoSplit/>
 				   <SplitHorizontal>1</SplitHorizontal>
 				   <TopRowBottomPane>1</TopRowBottomPane>
-				   <SplitVertical><<alltrim(str(this.GridObject.LockColumns))>></SplitVertical>
-				   <LeftColumnRightPane><<alltrim(str(this.GridObject.LockColumns))>></LeftColumnRightPane>
+				   <SplitVertical><<alltrim(str(This.GridObject.LockColumns))>></SplitVertical>
+				   <LeftColumnRightPane><<alltrim(str(This.GridObject.LockColumns))>></LeftColumnRightPane>
 				   <ActivePane>0</ActivePane>
 				   <Panes>
 				    <Pane>
@@ -1160,7 +1183,7 @@ Define Class ExcelXML As Custom
 		lcStringFilter = ""
 		If This.HasFilter And This.GridObject.HeaderHeight > 0
 			Text To lcStringFilter Textmerge Pretext 2 Noshow
-				<AutoFilter x:Range="R1C1:R<<alltrim(str(this.RowCount))>>C<<alltrim(str(this.ColumnCount))>>"
+				<AutoFilter x:Range="R1C1:R<<alltrim(str(This.RowCount))>>C<<alltrim(str(This.ColumnCount))>>"
 				 xmlns="urn:schemas-microsoft-com:office:excel">
 				</AutoFilter>
 			ENDTEXT
@@ -1175,9 +1198,9 @@ Define Class ExcelXML As Custom
 		lcStringColumnWidth = This.buildcolumnswidth()
 
 		Text To lcXmlWorksheet_part1 Textmerge Pretext 2 Noshow
-			 <Worksheet ss:Name="<<this.SheetName>>">
-			  <Table ss:ExpandedColumnCount="<<this.ColumnCount>>" ss:ExpandedRowCount="<<this.RowCount>>" x:FullColumns="1"
-			   x:FullRows="1" ss:DefaultRowHeight="<<alltrim(str(this.GridObject.RowHeight-3))>>">
+			 <Worksheet ss:Name="<<This.SheetName>>">
+			  <Table ss:ExpandedColumnCount="<<This.ColumnCount>>" ss:ExpandedRowCount="<<This.RowCount>>" x:FullColumns="1"
+			   x:FullRows="1" ss:DefaultRowHeight="<<alltrim(str(This.GridObject.RowHeight-3))>>">
 			   <<lcStringColumnWidth>>
 		ENDTEXT
 
@@ -1215,10 +1238,12 @@ Define Class ExcelXML As Custom
 			lnBytes = lnBytes + Strtofile( lcXmlExcelWorkbook + This.crlf, This.File, 1)
 			lnBytes = lnBytes + Strtofile( lcXmlAllStyles + This.crlf, This.File, 1)
 			lnBytes = lnBytes + Strtofile( lcXmlWorksheet_part1 + This.crlf, This.File, 1)
-			lnBytes = lnBytes + This.buildrows()
+
+			lnBytes = lnBytes + This.BuildRows()
+
 			lnBytes = lnBytes + Strtofile( lcXmlWorksheet_part2 + This.crlf, This.File, 1)
 
-			lLReturn = Iif(lnBytes > 0, .T., .F.)
+			llReturn = Iif(lnBytes > 0, .T., .F.)
 
 		Catch To loError
 			If File(This.File)
@@ -1227,7 +1252,7 @@ Define Class ExcelXML As Custom
 
 			Messagebox("An error occurred during the data exporting. " + Chr(13) + "Error: " + loError.Message, 16, "Exporting")
 
-			lLReturn = .F.
+			llReturn = .F.
 		Endtry
 
 		*select xxxStylesRowCol
@@ -1260,22 +1285,22 @@ Define Class ExcelXML As Custom
 		Endif
 
 		*- abre o arquivo apos salva-lo
-		If lLReturn And This.OpenAfterSaving
-			Declare Integer ShellExecute In SHELL32.Dll As WinAPI_OpenAfterSavingExcelXML;
+		If llReturn And This.OpenAfterSaving
+			Declare Integer ShellExecute In SHELL32.Dll As WinAPI_OpenAfterSavingExcelXml;
 				Integer HndWin, String cAction, String cFileName, ;
 				String cParams, String cDir, Integer nShowWin
 
-			WinAPI_OpenAfterSavingExcelXML(0, "OPEN", This.File, "", "", 1)
-			Clear Dlls "WinAPI_OpenAfterSavingExcelXML"
+			WinAPI_OpenAfterSavingExcelXml(0, "OPEN", This.File, "", "", 1)
+			Clear Dlls "WinAPI_OpenAfterSavingExcelXml"
 		Endif
 
-		Return lLReturn
+		Return llReturn
 
 	Endproc
 
 
 	*|================================================================================ 
-	*| Excelxml::
+	*| ExcelXml::
 	Procedure SeekStyle(plcRow, plcCol)
 
 		Local lcReturn
@@ -1296,6 +1321,53 @@ Define Class ExcelXML As Custom
 
 		Return lcReturn
 
-	Endproc
+	EndProc
+	
+	
+	*---------------------------------------------------------------------------------------
+	* After creating XML file in the Save() method, you can call this method and pass filename of XML file,
+	* to use Excell to open the XML file and convert it to an XLSX file.
+	*  Values for lnFileFormat:
+	* 	51 = xlOpenXMLWorkbook (without macro's in 2007-2013, xlsx)
+	* 	52 = xlOpenXMLWorkbookMacroEnabled (with or without macro's in 2007-2013, xlsm)
+	* 	50 = xlExcel12 (Excel Binary Workbook in 2007-2013 with or without macro's, xlsb)
+	* 	56 = xlExcel8 (97-2003 format in Excel 2007-2013, xls)
+	Procedure ConvertXmlToXlsx(tcFilename, tnFileFormat, tlOpenAfterExporting)
+
+		Local loExcel as "Excel.Application"
+		Local lcNewFilename, lnFileFormat, loWorkBook, lcSafety
+
+		loExcel = Createobject("Excel.Application")
+
+		If !IsObject(loExcel)
+			This.cErrorMessage = "Error starting Excel."
+			Return .F.
+		Endif
+
+		If !File(tcFileName)
+			This.cErrorMessage = "File not found: " + tcFilename
+			Return .F.
+		Else
+			loWorkBook = loExcel.Application.Workbooks.Open(tcFileName)
+		EndIf
+
+		lnFileFormat = Evl(tnFileFormat, 51) && 51 = xlsx as default
+		
+		If (".xml" $ tcFilename)
+			lcNewFilename = Strtran(tcFilename, ".xml", ".xlsx", 1, 99, 1)
+			loWorkBook.SaveAs(lcNewFilename, lnFileFormat)
+			lcSafety = Set("Safety")
+			Set Safety Off
+			Delete File (tcFileName)
+			Set Safety &lcSafety
+		Endif
+
+		If tlOpenAfterExporting
+			loExcel.Visible = .T.
+		Else
+			loExcel.Quit()
+		EndIf
+		
+	Endproc	
 
 Enddefine
