@@ -58,10 +58,12 @@ FIX - Sheet name cannot be blank. If is blank, will be changed to "Sheet1"
 FIX - Field Date/Datetime with NULL or EMPTY value builds a Excel file incorrectly.  
 FIX - Index error when the index tag is too big.
 
-| Properties and Methods | Description |  
+| Properties | Description |  
 | -----------------------|-------------|
 |![](ExcelXML_property_vs.bmp) Alias | Sets the cursor/alias name to export to an Excel XML file. This is used if the GridObject property is not set.|  
 |![](ExcelXML_property_vs.bmp) ColumnCount | Returns the number of columns included in the Excel file.|  
+|![](ExcelXML_property_vs.bmp) ColumnHeaderBackgroundColor | Colmn Header Background color. Can override grid header backcolor. Set to a string with Hex value, like "#CCCCCC" for light gray.|  
+|![](ExcelXML_property_vs.bmp) ColumnHeaderForeColor | Colmn Header ForeColor. Can override grid header forecolor. Set to a string with Hex value, like "#000000" for black.|  
 |![](ExcelXML_property_vs.bmp) File | Inform the name of Excel file. If you don't inform the name with the extension, the XML extension will be included. The default file name is "Book1"|  
 |![](ExcelXML_property_vs.bmp) GridObject | Identifies the Grid object to exported to an Excel XML file. RecordSource property on Grid should already be set.|
 |![](ExcelXML_property_vs.bmp) HasFilter | .T. Includes the option Filter in all columns in the generated file.|
@@ -72,12 +74,16 @@ FIX - Index error when the index tag is too big.
 |![](ExcelXML_property_vs.bmp) SheetName | Excel sheet name. The default name is "Sheet1"|
 |![](ExcelXML_property_vs.bmp) xmlEncoding | XML encoding type used to set the code that defines special characters. Default code is "iso-8859-1".|
 |![](ExcelXML_property_vs.bmp) Version | Object that contains the information about this class.|
+
+
+| Methods | Description |  
+| -----------------------|-------------|
 |![](ExcelXML_method_vs.bmp) About|About ExcelXML class|
 |![](ExcelXML_method_vs.bmp) Progress|Method used to show the percentage processed.|
 |![](ExcelXML_method_vs.bmp) Save|Creates the Excel XML file.|
-|![](ExcelXML_method_vs.bmp) ConvertXmlToXlsx|Converts the created Excel XML file file to XLS or XLSX format using Excel.|
+|![](ExcelXML_method_vs.bmp) ConvertXmlToXlsx|Converts the created Excel XML file to XLS or XLSX format using Excel.|
 
-## Sample 01
+ ## Sample 01
 ![](ExcelXML_sample01.png)
 
 ![](ExcelXML_sample01_excel.png)
