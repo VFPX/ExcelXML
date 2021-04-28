@@ -23,7 +23,7 @@ insert into students values ( "Michelle",  date(1978,12,15), 34 )
 insert into students values ( "Ryan",  	   date(1999,09,05), 14 )
 
 local loExcelXML, llOk
-loExcelXML = newobject("ExcelXML","ExcelXML.VCX")
+loExcelXML = NewObject("ExcelXML","..\ExcelXML.prg")
 loExcelXML.SheetName = "Students Grade 5A"
 loExcelXML.OpenAfterSaving = .t.
 llOk = loExcelXML.Save("Sample05.XML")
