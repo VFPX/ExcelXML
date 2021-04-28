@@ -1339,7 +1339,7 @@ Define Class ExcelXml As Custom
 
 		loExcel = Createobject("Excel.Application")
 
-		If Type(loExcel) != "O"
+		If Type("loExcel") != "O"
 			This.cErrorMessage = "Error starting Excel."
 			Return .F.
 		Endif
