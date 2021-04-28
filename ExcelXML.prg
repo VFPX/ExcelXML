@@ -1326,7 +1326,7 @@ Define Class ExcelXml As Custom
 	
 	*---------------------------------------------------------------------------------------
 	* After creating XML file in the Save() method, you can call this method and pass filename of XML file,
-	* to use Excell to open the XML file and convert it to an XLSX file.
+	* to use Excel to open the XML file and convert it to an XLSX file.
 	*  Values for lnFileFormat:
 	* 	51 = xlOpenXMLWorkbook (without macro's in 2007-2013, xlsx)
 	* 	52 = xlOpenXMLWorkbookMacroEnabled (with or without macro's in 2007-2013, xlsm)
@@ -1353,7 +1353,7 @@ Define Class ExcelXml As Custom
 
 		lnFileFormat = Evl(tnFileFormat, 51) && 51 = xlsx as default
 		
-		If (".xml" $ tcFilename)
+		If (".XML" $ Upper(tcFilename))
 			lcNewFilename = Strtran(tcFilename, ".xml", ".xlsx", 1, 99, 1)
 			loWorkBook.SaveAs(lcNewFilename, lnFileFormat)
 			lcSafety = Set("Safety")
